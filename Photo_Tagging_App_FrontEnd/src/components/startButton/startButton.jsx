@@ -1,4 +1,4 @@
-function StartButton({start}){
+function StartButton({start, image}){
 
     const buttonStyles = {
         margin: 5
@@ -6,7 +6,9 @@ function StartButton({start}){
 
     return(
         <div style={buttonStyles}>
-            <button onClick={start}>Start</button>
+            {image 
+                ? <button onClick={start}>Start</button> 
+                : <button>Loading...</button>} 
         </div>
     )
 }

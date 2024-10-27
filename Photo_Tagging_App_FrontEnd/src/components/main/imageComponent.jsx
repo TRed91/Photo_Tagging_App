@@ -11,11 +11,13 @@ function ImageComponent () {
     const [ found, setFound ] = useState(0);
     const [ gameStart, setGameStart] = useState(false);
     const [ gameEnd, setGameEnd ] = useState(false);
+    const [ image, setImage ] = useState(null);
 
     const imagesStyles = {
-        width: "800px",
-        height: "500px",
-        position: "relative"
+        width: "1280px",
+        height: "720px",
+        position: "relative",
+        background: image ? `url(${image})` : 'black'
     }
 
     const dropdownContainerStyles = {
@@ -28,6 +30,18 @@ function ImageComponent () {
     const dropdownStyles = {
         padding: 10
     }
+
+    useEffect(() => {
+        fetch('http://localhost:3000/image', {
+            method: 'get'
+        })
+        .then(res => res.blob())
+        .then(blob => { 
+            const url = URL.createObjectURL(blob);
+            console.log(url)
+            setImage(url);
+        });
+    }, [])
 
     useEffect(() => {
         const handleOutSideClick = (e) => {
@@ -69,9 +83,9 @@ function ImageComponent () {
 
     return (
         <div>
-            {!gameStart && <div><StartButton start={() => setGameStart(true)} /></div>}
+            {!gameStart && <div><StartButton start={() => setGameStart(true)} image={image} /></div>}
             <div className="image" onClick={handleClick} style={imagesStyles}>
-                {mouseX} {mouseY} {charPick}
+                {!image && 'Loading...'}
                 <div hidden={ddHidden} style={dropdownContainerStyles} ref={ref}>
                     <select name="character" id="char" onChange={handleSelect} style={dropdownStyles}>
                         <option value="char1">Char 1</option>
