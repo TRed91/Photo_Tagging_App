@@ -1,14 +1,12 @@
-function StartButton(){
+function StartButton({start}){
 
-    const styles = {
-        marginTop: "3rem"
+    const buttonStyles = {
+        margin: 5
     }
 
-    const handleClick = () => {};
-
     return(
-        <div style={styles}>
-            <button onClick={handleClick}>Start</button>
+        <div style={buttonStyles}>
+            <button onClick={start}>Start</button>
         </div>
     )
 }

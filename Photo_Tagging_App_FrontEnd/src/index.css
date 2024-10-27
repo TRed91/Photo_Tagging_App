@@ -68,10 +68,11 @@ button:focus-visible {
 }
 
 header {
+  margin: 0;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  gap: 10rem;
+  margin-bottom: 10px;
 }
 
 .image {
