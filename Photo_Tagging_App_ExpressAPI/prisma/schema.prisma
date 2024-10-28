@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_TEST")
+}
+
+model player {
+  playerId    Int @id @default(autoincrement())
+  playerName  String
+
+  scores  score[]
+}
+
+model score {
+  scoreId  Int @id @default(autoincrement())
+  score    Int
+
+  playerId Int
+  player   player @relation(fields: [playerId], references: [playerId], onDelete: Cascade)
+
+  imageId  Int
+  image    image @relation(fields: [imageId], references: [imageId])
+}
+
+model image {
+  imageId   Int @id @default(autoincrement())
+  imageName String
+  imageURL  String
+
+  scores    score[]
+  positions  position[]
+}
+
+model position {
+  positionId  Int @id @default(autoincrement())
+  xPosition   Int
+  yPosition   Int
+
+  imageId     Int
+  image       image @relation(fields: [imageId], references: [imageId], onDelete: Cascade)
+
+  characterId  Int
+  character   character @relation(fields: [characterId], references: [characterId], onDelete: Cascade)
+}
+
+model character {
+  characterId Int @id @default(autoincrement())
+  charName    String @unique
+
+  positions    position[]
+}

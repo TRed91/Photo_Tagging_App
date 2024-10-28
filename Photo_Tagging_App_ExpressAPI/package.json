@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "@prisma/client": "^5.21.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1"
+  },
+  "name": "photo_tagging_app_expressapi",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {
+    "prisma": "^5.21.1"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test && jest",
+    "dev": "NODE_ENV=development && node app.js",
+    "watch": "NODE_ENV=development && node --watch app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
