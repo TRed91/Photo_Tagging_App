@@ -12,6 +12,7 @@ function ImageComponent () {
     const [ gameStart, setGameStart] = useState(false);
     const [ gameEnd, setGameEnd ] = useState(false);
     const [ image, setImage ] = useState(null);
+    const [ imageData, setImageData ] = useState(null);
 
     const imagesStyles = {
         width: "1280px",
@@ -32,15 +33,24 @@ function ImageComponent () {
     }
 
     useEffect(() => {
-        fetch('http://localhost:3000/image', {
+        fetch('http://localhost:3000/image/1', {
             method: 'get'
         })
         .then(res => res.blob())
         .then(blob => { 
             const url = URL.createObjectURL(blob);
-            console.log(url)
             setImage(url);
-        });
+        })
+        .catch(err => console.log(err));
+
+        fetch('http://localhost:3000/image/1/data', {
+            method: 'get'
+        })
+        .then(res => res.json())
+        .then(data => {
+            setImageData(data.data)
+        })
+        .catch(err => console.log(err))
     }, [])
 
     useEffect(() => {
@@ -71,14 +81,24 @@ function ImageComponent () {
     const handleSelect = (e) => {
         setDdHidden(true);
         setCharPick(e.target.value);
-        // fetch => get
-         // x, y, char
-        // mock result
-        setResult({result: 'correct', time: '42:16:33'});
-        setFound(found + 1);
-        if (found + 1 == 3) {
-            setGameEnd(true);
-        }
+        fetch(`http://localhost:3000/image/1/position?select=${e.target.value}&xPos=${mouseX}&yPos=${mouseY}`, {
+            method: 'get',
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.result == 'success') {
+                setFound(found + 1);
+                if (found + 1 >= imageData.positions.length) {
+                    setResult({result: 'correct', time: '42:16:33'});
+                    setGameEnd(true);
+                } else {
+                    setResult({result: 'correct', time: ''});
+                }
+            } else {
+                setResult({result: 'wrong', time: ''});
+            }
+        })
+        .catch(err => console.log(err));
     }
 
     return (
@@ -86,14 +106,16 @@ function ImageComponent () {
             {!gameStart && <div><StartButton start={() => setGameStart(true)} image={image} /></div>}
             <div className="image" onClick={handleClick} style={imagesStyles}>
                 {!image && 'Loading...'}
-                <div hidden={ddHidden} style={dropdownContainerStyles} ref={ref}>
+                {imageData && <div hidden={ddHidden} style={dropdownContainerStyles} ref={ref}>
                     <select name="character" id="char" onChange={handleSelect} style={dropdownStyles}>
-                        <option value="char1">Char 1</option>
-                        <option value="char2">Char 2</option>
-                        <option value="char3">Char 3</option>
+                        <option value="">--choose--</option>
+                        {imageData.positions.map(e => {
+                            const name = e.character.charName;
+                            return <option value={name} key={name}>{name}</option>
+                        })}
                     </select>
-                </div>
-                {gameEnd && <div>
+                </div>}
+                {gameEnd && <div className="game-end-text">
                     <h1>You win!</h1>
                     <h2>Time: {result.time}</h2>
                     </div>}

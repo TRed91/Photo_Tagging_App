@@ -77,4 +77,15 @@ header {
 
 .image {
   background-color: #535bf2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.game-end-text {
+  background-color: #00000078;
+  
+  padding: 1rem;
+  color: rgb(128, 255, 111);
+  text-shadow: 0 0 5px rgb(29, 157, 15);
 }
