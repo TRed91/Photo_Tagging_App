@@ -13,19 +13,10 @@ datasource db {
   url      = env("DATABASE_URL_TEST")
 }
 
-model player {
-  playerId    Int @id @default(autoincrement())
-  playerName  String
-
-  scores  score[]
-}
-
 model score {
-  scoreId  Int @id @default(autoincrement())
-  score    Int
-
-  playerId Int
-  player   player @relation(fields: [playerId], references: [playerId], onDelete: Cascade)
+  scoreId    Int @id @default(autoincrement())
+  score      Int
+  playerName String
 
   imageId  Int
   image    image @relation(fields: [imageId], references: [imageId])
@@ -57,4 +48,10 @@ model character {
   charName    String @unique
 
   positions    position[]
+}
+
+model timeTrack {
+  timeTrackId Int @id @default(autoincrement())
+  timeStart   BigInt
+  timeEnd     BigInt?
 }

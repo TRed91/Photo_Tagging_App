@@ -14,7 +14,7 @@ exports.imageGet = async (req, res) => {
 exports.imageDataGet = async (req, res) => {
     try{
         const imageData = await db.getImage(parseInt(req.params.imageId));
-        res.json({ data: imageData })
+        res.json({ data: imageData });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ result: 'error', message: err.message });
@@ -37,6 +37,18 @@ exports.positionGet = async(req, res) => {
             return res.json({ result: 'fail' });
         }
     } catch(err) {
+        console.error(err.message);
+        res.status(500).json({ result: 'error', message: err.message })
+    }
+}
+
+exports.scorePost = async(req, res) => {
+    try {
+        const imageId = parseInt(req.params.imageId);
+        const { playerName, time } = req.body;
+        await db.createScore(imageId, playerName, time);
+        return res.json({ result: 'success', message: 'score post successful' })
+    } catch (err) {
         console.error(err.message);
         res.status(500).json({ result: 'error', message: err.message })
     }

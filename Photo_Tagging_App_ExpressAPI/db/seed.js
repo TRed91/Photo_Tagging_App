@@ -4,15 +4,6 @@ const client = require('./prismaClient');
 async function main() {
     console.log("Seeding...");
 
-    await client.player.createMany({
-        data: [
-            { playerName: 'BobTheBuilder' },
-            { playerName: 'Johnny87' },
-            { playerName: 'EricTheRick' },
-            { playerName: 'Nika_Paprika'},
-        ],
-    });
-
     await client.image.create({
         data: {
             imageName: "waldo_01",

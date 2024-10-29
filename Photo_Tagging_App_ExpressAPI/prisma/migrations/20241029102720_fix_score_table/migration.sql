@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "score" ALTER COLUMN "score" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "timeTrack" ALTER COLUMN "timeStart" SET DEFAULT CURRENT_TIMESTAMP;
