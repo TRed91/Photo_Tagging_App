@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import Header from './components/header/header'
 import './App.css'
-import MainComponent from './components/main/main'
+import ImageComponent from './components/main/imageComponent'
 
 function App() {
+  const [ imageId, setImageId ] = useState(1)
 
   return (
     <>
-    <Header />
-    <MainComponent/>
+    <Header imageId={imageId} />
+    <ImageComponent imageId={imageId} setImageId={(id) => setImageId(id)} />
     </>
   )
 }

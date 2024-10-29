@@ -1,18 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import StartButton from "../startButton/startButton";
+import NameEnter from "../nameEnter/nameEnter";
+import TargetBox from "./targetBox";
 
-function ImageComponent () {
+function ImageComponent ({ imageId }) {
     const ref = useRef(null);
     const [ mouseX, setMouseX ] = useState(null);
     const [ mouseY, setMouseY ] = useState(null);
     const [ ddHidden, setDdHidden ] = useState(true);
-    const [ charPick, setCharPick] = useState(null);
     const [ result, setResult ] = useState(null);
     const [ found, setFound ] = useState(0);
     const [ gameStart, setGameStart] = useState(false);
     const [ gameEnd, setGameEnd ] = useState(false);
     const [ image, setImage ] = useState(null);
     const [ imageData, setImageData ] = useState(null);
+    const [ timeId, setTimeId ] = useState(null);
+    const [ time, setTime ] = useState(null);
+    const [ boxes, setBoxes ] = useState([]);
 
     const imagesStyles = {
         width: "1280px",
@@ -32,8 +36,20 @@ function ImageComponent () {
         padding: 10
     }
 
+    const correctStyle = {
+        color: 'green'
+    }
+
+    const wrongStyle = {
+        color: 'red'
+    }
+
+    const resultStyles = {
+        fontWeight: 'bold'
+    }
+
     useEffect(() => {
-        fetch('http://localhost:3000/image/1', {
+        fetch(`http://localhost:3000/image/${imageId}`, {
             method: 'get'
         })
         .then(res => res.blob())
@@ -43,12 +59,12 @@ function ImageComponent () {
         })
         .catch(err => console.log(err));
 
-        fetch('http://localhost:3000/image/1/data', {
+        fetch(`http://localhost:3000/image/${imageId}/data`, {
             method: 'get'
         })
         .then(res => res.json())
         .then(data => {
-            setImageData(data.data)
+            setImageData(data.data);
         })
         .catch(err => console.log(err))
     }, [])
@@ -80,7 +96,6 @@ function ImageComponent () {
 
     const handleSelect = (e) => {
         setDdHidden(true);
-        setCharPick(e.target.value);
         fetch(`http://localhost:3000/image/1/position?select=${e.target.value}&xPos=${mouseX}&yPos=${mouseY}`, {
             method: 'get',
         })
@@ -88,9 +103,9 @@ function ImageComponent () {
         .then(data => {
             if (data.result == 'success') {
                 setFound(found + 1);
+                setBoxes((boxes) => [...boxes, {x: mouseX, y: mouseY}]);
                 if (found + 1 >= imageData.positions.length) {
-                    setResult({result: 'correct', time: '42:16:33'});
-                    setGameEnd(true);
+                    postTime()
                 } else {
                     setResult({result: 'correct', time: ''});
                 }
@@ -101,12 +116,36 @@ function ImageComponent () {
         .catch(err => console.log(err));
     }
 
+    const postTime = () => {
+        fetch(`http://localhost:3000/timer`, {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                timeId: timeId
+            }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            const result = new Date(data.time);
+            const time = `${result.getMinutes()}:${result.getSeconds()}:${result.getMilliseconds()}`
+            setTime(data.time);
+            setResult({ result: 'correct', time: time });
+            setGameEnd(true);
+        })
+        .catch(err => console.log(err))
+    }
+
     return (
         <div>
-            {!gameStart && <div><StartButton start={() => setGameStart(true)} image={image} /></div>}
+            {!gameStart && <div><StartButton start={() => setGameStart(true)} 
+                                             setTimerId={(id) => setTimeId(id)} 
+                                             image={image} />
+                            </div>}
             <div className="image" onClick={handleClick} style={imagesStyles}>
                 {!image && 'Loading...'}
-                {imageData && <div hidden={ddHidden} style={dropdownContainerStyles} ref={ref}>
+                {!ddHidden && <div style={dropdownContainerStyles} ref={ref}>
                     <select name="character" id="char" onChange={handleSelect} style={dropdownStyles}>
                         <option value="">--choose--</option>
                         {imageData.positions.map(e => {
@@ -118,10 +157,16 @@ function ImageComponent () {
                 {gameEnd && <div className="game-end-text">
                     <h1>You win!</h1>
                     <h2>Time: {result.time}</h2>
+                    <NameEnter time={time} imageId={imageId} />
                     </div>}
+                {boxes.map(box => {
+                    return <TargetBox x={box.x} y={box.y} key={box.x + box.y}/>
+                })}
             </div>
             <div className="resultContainer">
-                <p>Found: {found}/3 {result && result.result}</p>
+                <p style={resultStyles}>Found: {found}/3 {result && 
+                    <span style={result.result == 'correct' ? correctStyle : wrongStyle}>{result.result}</span>}
+                </p>
             </div>
         </div>
     )
