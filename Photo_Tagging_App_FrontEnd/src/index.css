@@ -13,6 +13,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1 {
+  margin: 0;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -88,4 +92,5 @@ header {
   padding: 1rem;
   color: rgb(128, 255, 111);
   text-shadow: 0 0 5px rgb(29, 157, 15);
+  z-index: 50;
 }

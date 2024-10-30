@@ -1,7 +1,8 @@
 function StartButton({start, setTimerId, image}){
 
     const buttonStyles = {
-        margin: 5
+        margin: 5,
+        fontSize: 20,
     }
 
     const handleStartGame = (e) => {
